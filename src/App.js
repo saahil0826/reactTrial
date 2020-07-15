@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import CardList from "./components/card-list/card-list.js";
+import SearchBox from "./components/search-box/search-box.js";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      cities: [],
+      searchfield: ""
+    };
+
+    // this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange = e => {
+    this.setState({ searchfield: e.target.value });
+  };
+
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(response => response.json())
+      .then(users => this.setState({ cities: users }));
+  }
+
+  render() {
+    const { cities, searchfield } = this.state;
+    const filteredCities = cities.filter(city =>
+      city.name.toLowerCase().includes(searchfield.toLowerCase())
+    );
+
+    return (
+      <div className="App">
+        <h1 className="heading"> Random People Info.org </h1>
+        <SearchBox
+          placeholder="search persons"
+          handleChange={this.handleChange}
+        />
+        <CardList cities={filteredCities} />
+      </div>
+    );
+  }
 }
 
 export default App;
